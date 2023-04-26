@@ -24,8 +24,8 @@ class GetTweetLocatin:
         # print(users_locs)
         dataframe = pd.DataFrame(data=users_locs,columns=['Tweet ID', 'User Name', 'Created at', 'User Screen Name',
                                                           "Tweets",'Tweet Location', 'User Location'])
-        gn = geocoders.GeoNames()
-        print(gn.geocode("Cleveland, OH 44106"))
+        # gn = geocoders.GeoNames()
+        # print(gn.geocode("Cleveland, OH 44106"))
         return users_locs, dataframe
 
         # return users_locs

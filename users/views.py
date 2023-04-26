@@ -132,8 +132,7 @@ def UserSVM(request):
     UserAlgorithmResultsModel.objects.create(username=username, algorithmname=algorithmname, accuracy=1.0, mae=0.0,
                                              mse=0.0, rmse=0.0, r_squared=1.0)
     return render(request, 'users/SVMResults.html',{"accuracy": 1.0, "mae": 0.0, "mse": 0.0, "rmse": 0.0, "r_squared": 1.0})
-    # return render(request, 'users/SVMResults.html',
-                  # {"accuracy": accuracy, "mae": mae, "mse": mse, "rmse": rmse, "r_squared": r_squared})
+    # return render(request, 'users/SVMResults.html', {"accuracy": accuracy, "mae": mae, "mse": mse, "rmse": rmse, "r_squared": r_squared})
 
 def UserDecisionTree(request):
     data_list = UserSearchTweetsLocationModel.objects.all()
