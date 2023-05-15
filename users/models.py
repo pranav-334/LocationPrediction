@@ -1,6 +1,5 @@
 from django.db import models
 
-# Create your models here.
 class UserRegistrationModel(models.Model):
     name = models.CharField(max_length=100)
     loginid = models.CharField(unique=True, max_length=100)

@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.contrib import messages
+
+from .TwitterClientAlgo import TwitterClient
 from .forms import UserRegistrationForm
 from .models import UserRegistrationModel, UserSearchTweetsLocationModel, UserAlgorithmResultsModel
 from .Tweetinfo import GetTweetLocatin
@@ -8,6 +10,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .algorithms.UserNaiveBayes import UserNaiveBayesClass
 from .algorithms.UserSVMAlgorithm import UserSVMClass
 from .algorithms.UserDecisionTree import UserDecisionTreeClass
+
+import tweepy
 
 # Create your views here.
 def UserRegisterActions(request):
@@ -82,9 +86,25 @@ def GetTweets(request):
             tweettext = x[4]
             tweet_location = x[5]
             user_loc = x[6]
+
+            # obbj = TwitterClient()
+            # consumer_key = 'aKBt8eJagd4PumKz8LGmZw'
+            # consumer_secret = 'asFAO5b3Amo8Turjl2RxiUVXyviK6PYe1X6sVVBA'
+            # access_token = '1914024835-dgZBlP6Tn2zHbmOVOPHIjSiTabp9bVAzRSsKaDX'
+            # access_token_secret = 'zCgN7F4csr6f3eU5uhX6NZR12O5o6mHWgBALY9U4'
+            # auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+            # auth.set_access_token(access_token, access_token_secret)
+            # api = tweepy.API(auth, wait_on_rate_limit=True)
+
+            # tweet_location =
+            # uu = api.get_user(screen_name=user_screen_name)
+            # user_loc = uu.location # location fetch (net)
+
             # dff.update()
             # print("!!User_loc ",user_loc)
-            if len(tweet_location)!=0:
+
+            # if len(tweet_location)!=0:
+            if tweet_location != None:
                 #print("Tweet Location ", tweet_location)
                 lattitude,longitude,address = obj.getLatitudeLongitude(tweet_location)
                 #print(tweet_location,"==",lattitude,address)
@@ -95,6 +115,14 @@ def GetTweets(request):
                     flag = 1
                 UserSearchTweetsLocationModel.objects.create(tweetid=tweetId, username=username, userscreenname=user_screen_name,tweettext=tweettext,
                                                              createdat=created_at,address=address,latitude=lattitude,longitude=longitude,userloc=flag)
+            else:
+                flag = 0
+                # if user_loc==None:
+                #     flag = 0
+                # else:
+                #     flag = 1
+                UserSearchTweetsLocationModel.objects.create(tweetid=tweetId, username=username, userscreenname=user_screen_name,tweettext=tweettext,
+                                                             createdat=created_at,address='',latitude=0.0,longitude=0.0,userloc=flag)
 
         return render(request,"users/GetTweetsinfo.html",{'data':dataframe})
 
@@ -125,14 +153,14 @@ def UserSVM(request):
     data_list = UserSearchTweetsLocationModel.objects.all()
     df = read_frame(data_list)
     obj = UserSVMClass()
-    # accuracy, mae, mse, rmse, r_squared = obj.getSVM(df)
+    accuracy, mae, mse, rmse, r_squared = obj.getSVM(df)
     algorithmname = "SVM"
     username = request.session['loginid']
     # UserAlgorithmResultsModel.objects.create(username=username, algorithmname=algorithmname, accuracy=accuracy, mae=mae,mse=mse, rmse=rmse, r_squared=r_squared)
     UserAlgorithmResultsModel.objects.create(username=username, algorithmname=algorithmname, accuracy=1.0, mae=0.0,
                                              mse=0.0, rmse=0.0, r_squared=1.0)
-    return render(request, 'users/SVMResults.html',{"accuracy": 1.0, "mae": 0.0, "mse": 0.0, "rmse": 0.0, "r_squared": 1.0})
-    # return render(request, 'users/SVMResults.html', {"accuracy": accuracy, "mae": mae, "mse": mse, "rmse": rmse, "r_squared": r_squared})
+    # return render(request, 'users/SVMResults.html',{"accuracy": 1.0, "mae": 0.0, "mse": 0.0, "rmse": 0.0, "r_squared": 1.0})
+    return render(request, 'users/SVMResults.html', {"accuracy": accuracy, "mae": mae, "mse": mse, "rmse": rmse, "r_squared": r_squared})
 
 def UserDecisionTree(request):
     data_list = UserSearchTweetsLocationModel.objects.all()

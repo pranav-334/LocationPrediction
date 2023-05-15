@@ -2,6 +2,7 @@ import tweepy as tw
 import pandas as pd
 from geopy import geocoders
 from geopy.geocoders import Nominatim
+from users import TwitterClientAlgo as tca
 
 
 class GetTweetLocatin:
@@ -19,8 +20,21 @@ class GetTweetLocatin:
         tweets = tw.Cursor(api.search_tweets, q=search_words, lang="en", since=date_since).items(50)
         print("=====>", tweets.__dict__)
 
-        users_locs = [[tweet.id, tweet.user.name, tweet.created_at, tweet.user.screen_name, tweet.text,
-                       tweet.user.location, tweet.coordinates] for tweet in tweets]
+        # user1 = api.get_user("username")
+        # location = user.location
+        # for x in users_locs:
+        #     x[6] = api.get_user(screen_name=x[3])
+
+
+        # users_locs = [[tweet.id, tweet.user.name, tweet.created_at, tweet.user.screen_name, tweet.text,
+        #                tweet.user.location, tweet.coordinates] for tweet in tweets]
+
+        obj = tca.TwitterClient()
+        users_locs = [[tweet.id, tweet.user.name, tweet.created_at, tweet.user.screen_name, obj.clean_tweet(tweet.text),
+                       tweet.place.name if tweet.place else None,
+                       api.get_user(screen_name=tweet.user.screen_name).location]
+                      for tweet in tweets]
+
         # print(users_locs)
         dataframe = pd.DataFrame(data=users_locs,columns=['Tweet ID', 'User Name', 'Created at', 'User Screen Name',
                                                           "Tweets",'Tweet Location', 'User Location'])
@@ -33,7 +47,7 @@ class GetTweetLocatin:
     def getLatitudeLongitude(self,cityname):
 
         geolocator = Nominatim(user_agent="saipranavgodishala49@gmail.com")
-        # geolocator = Nominatim(user_agent="datapointprojects13@gmail.com")
+
         location = geolocator.geocode(cityname)
         try:
             return location.latitude, location.longitude,location.address

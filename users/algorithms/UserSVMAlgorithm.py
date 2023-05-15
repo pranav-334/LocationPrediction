@@ -12,6 +12,10 @@ class UserSVMClass:
         print("df=", df.head())
         X = df[['latitude', 'longitude']]
         y = df[['userloc']]
+        # print(y)
+        # lenn = df.shape[0]
+        # y['userloc'] = range(lenn)
+        # y['userloc'] = y['userloc'] % 4
         y = column_or_1d(y, warn=True)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=1 / 3, random_state=0)
         model = svm.SVC()
@@ -25,12 +29,10 @@ class UserSVMClass:
         mse = mean_squared_error(y_pred, y_test)
         rmse = math.sqrt(mse)
         r_squared = r2_score(y_pred, y_test)
-        print("Decision Tree", "Accuracy = ", accuracy, "\t MAE=", mae, "\t MSE=", mse, "\t RMSE=", rmse,
+        print("SVM", "Accuracy = ", accuracy, "\t MAE=", mae, "\t MSE=", mse, "\t RMSE=", rmse,
               "\t r_squared = ", r_squared)
+
+
+
         # return round(accuracy,2),round(mae,2),round(mse,2),round(rmse,2),round(r_squared,2)
         return accuracy, mae, mse, rmse, r_squared
-
-    # problem ento teliyatledu ... check cheyai time padutundi.... now its not possible
-    # time eppudo
-    #naku eroju kudaradu...meku code yevaru echaro vallani adagandi
-    # appudu it worked .., facing this error after deletion of the existing contents
